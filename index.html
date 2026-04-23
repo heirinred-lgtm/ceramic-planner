@@ -574,7 +574,7 @@
                     </div>
                 </div>
                 <div class="image-gallery">
-                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)" multiple>
                     <div class="add-image-btn" onclick="triggerAddImage(this)">
                         <i class="fas fa-plus"></i>
                         <span>添加图片</span>
@@ -599,7 +599,7 @@
                     </div>
                 </div>
                 <div class="image-gallery">
-                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)" multiple>
                     <div class="add-image-btn" onclick="triggerAddImage(this)">
                         <i class="fas fa-plus"></i>
                         <span>添加图片</span>
@@ -624,7 +624,7 @@
                     </div>
                 </div>
                 <div class="image-gallery">
-                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)" multiple>
                     <div class="add-image-btn" onclick="triggerAddImage(this)">
                         <i class="fas fa-plus"></i>
                         <span>添加图片</span>
@@ -649,7 +649,7 @@
                     </div>
                 </div>
                 <div class="image-gallery">
-                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)" multiple>
                     <div class="add-image-btn" onclick="triggerAddImage(this)">
                         <i class="fas fa-plus"></i>
                         <span>添加图片</span>
@@ -674,7 +674,7 @@
                     </div>
                 </div>
                 <div class="image-gallery">
-                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)" multiple>
                     <div class="add-image-btn" onclick="triggerAddImage(this)">
                         <i class="fas fa-plus"></i>
                         <span>添加图片</span>
@@ -699,7 +699,7 @@
                     </div>
                 </div>
                 <div class="image-gallery">
-                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)" multiple>
                     <div class="add-image-btn" onclick="triggerAddImage(this)">
                         <i class="fas fa-plus"></i>
                         <span>添加图片</span>
@@ -750,7 +750,7 @@
                     </div>
                 </div>
                 <div class="image-gallery">
-                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)" multiple>
                     <div class="add-image-btn" onclick="triggerAddImage(this)">
                         <i class="fas fa-plus"></i>
                         <span>添加图片</span>
@@ -814,33 +814,37 @@
         }
 
         function uploadImage(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
+            if (input.files && input.files.length > 0) {
                 const imageGallery = input.parentElement;
                 const addBtn = input.nextElementSibling;
                 const card = input.closest('.card');
                 
-                reader.onload = function(e) {
-                    const base64Image = e.target.result;
+                // 处理所有选择的文件
+                Array.from(input.files).forEach(file => {
+                    const reader = new FileReader();
                     
-                    // 创建新的图片项
-                    const newImageItem = document.createElement('div');
-                    newImageItem.className = 'image-item';
-                    newImageItem.onclick = function() { enlargeImage(this.querySelector('img').src); };
-                    newImageItem.innerHTML = `
-                        <img src="${base64Image}">
-                        <button class="delete-image-btn" onclick="deleteImage(this, event)">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
-                    // 在添加按钮前插入（最右侧）
-                addBtn.before(newImageItem);
+                    reader.onload = function(e) {
+                        const base64Image = e.target.result;
+                        
+                        // 创建新的图片项
+                        const newImageItem = document.createElement('div');
+                        newImageItem.className = 'image-item';
+                        newImageItem.onclick = function() { enlargeImage(this.querySelector('img').src); };
+                        newImageItem.innerHTML = `
+                            <img src="${base64Image}">
+                            <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        `;
+                        // 在添加按钮前插入（最右侧）
+                        addBtn.before(newImageItem);
+                        
+                        // 保存卡片数据到localStorage
+                        saveCardData(card);
+                    }
                     
-                    // 保存图片到localStorage
-                    saveCardData(card);
-                }
-                
-                reader.readAsDataURL(input.files[0]);
+                    reader.readAsDataURL(file);
+                });
             }
         }
 
@@ -966,7 +970,7 @@
                         </div>
                     </div>
                     <div class="image-gallery">
-                        <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                        <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)" multiple>
                         <div class="add-image-btn" onclick="triggerAddImage(this)">
                             <i class="fas fa-plus"></i>
                             <span>添加图片</span>
