@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#2c5aa0">
+    <meta name="description" content="景德镇画瓷之旅素材整理与盘子采购计划">
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20ceramic%20plate%20painting%20icon%2C%20blue%20and%20white%20porcelain%2C%20minimal%20design&image_size=square">
+    <title>景德镇画瓷之旅 - 素材整理与采购计划</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;500;700&family=Noto+Sans+SC:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2c5aa0;
+            --secondary-color: #f8f5f0;
+            --accent-color: #e63946;
+            --text-color: #333;
+            --light-text: #666;
+            --border-color: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background-color: var(--secondary-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        h1 {
+            font-family: 'Noto Serif SC', serif;
+            color: var(--primary-color);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: var(--light-text);
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .instructions {
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 0.95rem;
+            color: var(--light-text);
+        }
+
+        .add-card-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            justify-content: center;
+        }
+
+        .add-card-input {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            width: 300px;
+        }
+
+        .add-card-btn {
+            padding: 12px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .add-card-btn:hover {
+            background-color: #1a3d7a;
+        }
+
+        .card-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .card {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title-input {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.3rem;
+            color: var(--primary-color);
+            border: none;
+            background: transparent;
+            border-bottom: 1px solid transparent;
+            padding: 5px 0;
+            width: 300px;
+        }
+
+        .card-title-input:hover,
+        .card-title-input:focus {
+            border-bottom-color: var(--primary-color);
+            outline: none;
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .delete-card-btn {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 8px 15px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-card-btn:hover {
+            background-color: #c1121f;
+        }
+
+        .image-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .image-item {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            background-color: #f0f0f0;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        .image-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .placeholder-icon {
+            font-size: 2.5rem;
+            color: var(--light-text);
+        }
+
+        .delete-image-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 25px;
+            height: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.8rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-item:hover .delete-image-btn {
+            opacity: 1;
+        }
+
+        .add-image-btn {
+            width: 150px;
+            height: 150px;
+            background-color: #f8f8f8;
+            border: 2px dashed var(--border-color);
+            border-radius: var(--border-radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .add-image-btn:hover {
+            border-color: var(--primary-color);
+            background-color: #f0f4f8;
+        }
+
+        .add-image-btn i {
+            font-size: 2rem;
+            color: var(--light-text);
+            margin-bottom: 5px;
+        }
+
+        .add-image-btn span {
+            font-size: 0.85rem;
+            color: var(--light-text);
+        }
+
+        .upload-input {
+            display: none;
+        }
+
+        .plate-section {
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .plate-section h4 {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            color: var(--primary-color);
+        }
+
+        .plate-form {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .plate-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+        }
+
+        .plate-add-btn {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .plate-add-btn:hover {
+            background-color: #1a3d7a;
+        }
+
+        .plate-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            list-style: none;
+        }
+
+        .plate-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background-color: var(--secondary-color);
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
+        }
+
+        .plate-delete-btn {
+            background-color: transparent;
+            color: var(--accent-color);
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 0;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .plate-delete-btn:hover {
+            color: #c1121f;
+        }
+
+        .summary {
+            background-color: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .summary h2 {
+            font-family: 'Noto Serif SC', serif;
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            font-weight: 500;
+            color: var(--primary-color);
+            background-color: #f8f5f0;
+            border-radius: var(--border-radius);
+        }
+
+        @media (max-width: 768px) {
+            .add-card-form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .add-card-input {
+                width: 100%;
+            }
+
+            .card-title-input {
+                width: 200px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 15px;
+            }
+
+            .card {
+                padding: 20px;
+            }
+
+            .image-gallery {
+                gap: 10px;
+            }
+
+            .image-item,
+            .add-image-btn {
+                width: 120px;
+                height: 120px;
+            }
+
+            .add-image-btn i {
+                font-size: 1.5rem;
+            }
+
+            .plate-form {
+                flex-direction: column;
+            }
+
+            .plate-list {
+                justify-content: center;
+            }
+
+            .summary {
+                padding: 20px;
+            }
+
+            .summary-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .card-title-input {
+                width: 150px;
+                font-size: 1.1rem;
+            }
+
+            .image-item,
+            .add-image-btn {
+                width: 100px;
+                height: 100px;
+            }
+
+            .add-image-btn span {
+                font-size: 0.75rem;
+            }
+
+            .plate-input {
+                font-size: 0.85rem;
+            }
+
+            .plate-add-btn {
+                font-size: 0.85rem;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>景德镇画瓷之旅</h1>
+            <div class="subtitle">素材整理与盘子采购计划</div>
+        </header>
+
+        <div class="instructions">
+            记录您的参考图片和素材，在每个卡片中添加需要的盘子，底部自动生成采购总结。
+        </div>
+
+        <div class="add-card-form">
+            <input type="text" class="add-card-input" id="newCardName" placeholder="输入新卡片名称">
+            <button class="add-card-btn" onclick="addNewCard()">添加卡片</button>
+        </div>
+
+        <div class="card-grid" id="cardGrid">
+            <!-- 默认卡片1 -->
+            <div class="card" data-card-id="1">
+                <div class="card-header">
+                    <input type="text" class="card-title-input" value="青花山水大盘" onchange="updateCardTitle(this)">
+                    <div class="card-actions">
+                        <button class="delete-card-btn" onclick="deleteCard(this)">删除卡片</button>
+                    </div>
+                </div>
+                <div class="image-gallery">
+                    <div class="image-item" onclick="triggerFileInput(this)">
+                        <i class="fas fa-image placeholder-icon"></i>
+                        <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <div class="add-image-btn" onclick="triggerAddImage(this)">
+                        <i class="fas fa-plus"></i>
+                        <span>添加图片</span>
+                    </div>
+                </div>
+                <div class="plate-section">
+                    <h4>需要的盘子</h4>
+                    <div class="plate-form">
+                        <input type="text" class="plate-input" placeholder="输入盘子形状，例如 8寸圆盘">
+                        <button class="plate-add-btn" onclick="addPlateToCard(this)">添加</button>
+                    </div>
+                    <ul class="plate-list"></ul>
+                </div>
+            </div>
+
+            <!-- 默认卡片2 -->
+            <div class="card" data-card-id="2">
+                <div class="card-header">
+                    <input type="text" class="card-title-input" value="釉里红鱼藻纹盘" onchange="updateCardTitle(this)">
+                    <div class="card-actions">
+                        <button class="delete-card-btn" onclick="deleteCard(this)">删除卡片</button>
+                    </div>
+                </div>
+                <div class="image-gallery">
+                    <div class="image-item" onclick="triggerFileInput(this)">
+                        <i class="fas fa-image placeholder-icon"></i>
+                        <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <div class="add-image-btn" onclick="triggerAddImage(this)">
+                        <i class="fas fa-plus"></i>
+                        <span>添加图片</span>
+                    </div>
+                </div>
+                <div class="plate-section">
+                    <h4>需要的盘子</h4>
+                    <div class="plate-form">
+                        <input type="text" class="plate-input" placeholder="输入盘子形状，例如 8寸圆盘">
+                        <button class="plate-add-btn" onclick="addPlateToCard(this)">添加</button>
+                    </div>
+                    <ul class="plate-list"></ul>
+                </div>
+            </div>
+
+            <!-- 默认卡片3 -->
+            <div class="card" data-card-id="3">
+                <div class="card-header">
+                    <input type="text" class="card-title-input" value="明代青花缠枝莲线稿" onchange="updateCardTitle(this)">
+                    <div class="card-actions">
+                        <button class="delete-card-btn" onclick="deleteCard(this)">删除卡片</button>
+                    </div>
+                </div>
+                <div class="image-gallery">
+                    <div class="image-item" onclick="triggerFileInput(this)">
+                        <i class="fas fa-image placeholder-icon"></i>
+                        <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <div class="add-image-btn" onclick="triggerAddImage(this)">
+                        <i class="fas fa-plus"></i>
+                        <span>添加图片</span>
+                    </div>
+                </div>
+                <div class="plate-section">
+                    <h4>需要的盘子</h4>
+                    <div class="plate-form">
+                        <input type="text" class="plate-input" placeholder="输入盘子形状，例如 8寸圆盘">
+                        <button class="plate-add-btn" onclick="addPlateToCard(this)">添加</button>
+                    </div>
+                    <ul class="plate-list"></ul>
+                </div>
+            </div>
+
+            <!-- 默认卡片4 -->
+            <div class="card" data-card-id="4">
+                <div class="card-header">
+                    <input type="text" class="card-title-input" value="釉下五彩花卉盘" onchange="updateCardTitle(this)">
+                    <div class="card-actions">
+                        <button class="delete-card-btn" onclick="deleteCard(this)">删除卡片</button>
+                    </div>
+                </div>
+                <div class="image-gallery">
+                    <div class="image-item" onclick="triggerFileInput(this)">
+                        <i class="fas fa-image placeholder-icon"></i>
+                        <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <div class="add-image-btn" onclick="triggerAddImage(this)">
+                        <i class="fas fa-plus"></i>
+                        <span>添加图片</span>
+                    </div>
+                </div>
+                <div class="plate-section">
+                    <h4>需要的盘子</h4>
+                    <div class="plate-form">
+                        <input type="text" class="plate-input" placeholder="输入盘子形状，例如 8寸圆盘">
+                        <button class="plate-add-btn" onclick="addPlateToCard(this)">添加</button>
+                    </div>
+                    <ul class="plate-list"></ul>
+                </div>
+            </div>
+
+            <!-- 默认卡片5 -->
+            <div class="card" data-card-id="5">
+                <div class="card-header">
+                    <input type="text" class="card-title-input" value="水彩风格花卉配色" onchange="updateCardTitle(this)">
+                    <div class="card-actions">
+                        <button class="delete-card-btn" onclick="deleteCard(this)">删除卡片</button>
+                    </div>
+                </div>
+                <div class="image-gallery">
+                    <div class="image-item" onclick="triggerFileInput(this)">
+                        <i class="fas fa-image placeholder-icon"></i>
+                        <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <div class="add-image-btn" onclick="triggerAddImage(this)">
+                        <i class="fas fa-plus"></i>
+                        <span>添加图片</span>
+                    </div>
+                </div>
+                <div class="plate-section">
+                    <h4>需要的盘子</h4>
+                    <div class="plate-form">
+                        <input type="text" class="plate-input" placeholder="输入盘子形状，例如 8寸圆盘">
+                        <button class="plate-add-btn" onclick="addPlateToCard(this)">添加</button>
+                    </div>
+                    <ul class="plate-list"></ul>
+                </div>
+            </div>
+
+            <!-- 默认卡片6 -->
+            <div class="card" data-card-id="6">
+                <div class="card-header">
+                    <input type="text" class="card-title-input" value="釉里红鱼纹素材" onchange="updateCardTitle(this)">
+                    <div class="card-actions">
+                        <button class="delete-card-btn" onclick="deleteCard(this)">删除卡片</button>
+                    </div>
+                </div>
+                <div class="image-gallery">
+                    <div class="image-item" onclick="triggerFileInput(this)">
+                        <i class="fas fa-image placeholder-icon"></i>
+                        <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <div class="add-image-btn" onclick="triggerAddImage(this)">
+                        <i class="fas fa-plus"></i>
+                        <span>添加图片</span>
+                    </div>
+                </div>
+                <div class="plate-section">
+                    <h4>需要的盘子</h4>
+                    <div class="plate-form">
+                        <input type="text" class="plate-input" placeholder="输入盘子形状，例如 8寸圆盘">
+                        <button class="plate-add-btn" onclick="addPlateToCard(this)">添加</button>
+                    </div>
+                    <ul class="plate-list"></ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部采购总结 -->
+        <div class="summary">
+            <h2>盘子采购总结</h2>
+            <div class="summary-content" id="summaryContent">
+                <!-- 动态生成的总结内容 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let cardIdCounter = 7;
+
+        function addNewCard() {
+            const input = document.getElementById('newCardName');
+            const cardName = input.value.trim();
+            
+            if (!cardName) {
+                alert('请输入卡片名称');
+                return;
+            }
+
+            const cardGrid = document.getElementById('cardGrid');
+            const newCard = document.createElement('div');
+            newCard.className = 'card';
+            newCard.dataset.cardId = cardIdCounter;
+            
+            newCard.innerHTML = `
+                <div class="card-header">
+                    <input type="text" class="card-title-input" value="${cardName}" onchange="updateCardTitle(this)">
+                    <div class="card-actions">
+                        <button class="delete-card-btn" onclick="deleteCard(this)">删除卡片</button>
+                    </div>
+                </div>
+                <div class="image-gallery">
+                    <div class="image-item" onclick="triggerFileInput(this)">
+                        <i class="fas fa-image placeholder-icon"></i>
+                        <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                    <div class="add-image-btn" onclick="triggerAddImage(this)">
+                        <i class="fas fa-plus"></i>
+                        <span>添加图片</span>
+                    </div>
+                </div>
+                <div class="plate-section">
+                    <h4>需要的盘子</h4>
+                    <div class="plate-form">
+                        <input type="text" class="plate-input" placeholder="输入盘子形状，例如 8寸圆盘">
+                        <button class="plate-add-btn" onclick="addPlateToCard(this)">添加</button>
+                    </div>
+                    <ul class="plate-list"></ul>
+                </div>
+            `;
+            
+            cardGrid.appendChild(newCard);
+            input.value = '';
+            cardIdCounter++;
+            updateSummary();
+        }
+
+        function deleteCard(button) {
+            const card = button.closest('.card');
+            card.remove();
+            updateSummary();
+        }
+
+        function updateCardTitle(input) {
+            updateSummary();
+        }
+
+        function triggerFileInput(imageItem) {
+            const card = imageItem.closest('.card');
+            const uploadInput = card.querySelector('.upload-input');
+            uploadInput.click();
+        }
+
+        function triggerAddImage(addBtn) {
+            const card = addBtn.closest('.card');
+            const uploadInput = card.querySelector('.upload-input');
+            uploadInput.click();
+        }
+
+        function uploadImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                const imageItem = input.previousElementSibling;
+                const addBtn = input.nextElementSibling;
+                
+                reader.onload = function(e) {
+                    // 移除占位图标
+                    imageItem.innerHTML = `
+                        <img src="${e.target.result}">
+                        <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    
+                    // 在添加按钮前插入新的图片项
+                    const newImageItem = imageItem.cloneNode(true);
+                    newImageItem.innerHTML = `
+                        <i class="fas fa-image placeholder-icon"></i>
+                        <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    addBtn.before(newImageItem);
+                }
+                
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function deleteImage(button, event) {
+            event.stopPropagation();
+            const imageItem = button.parentElement;
+            const card = imageItem.closest('.card');
+            const addBtn = card.querySelector('.add-image-btn');
+            
+            // 只删除有图片的项，保留空的
+            const img = imageItem.querySelector('img');
+            if (img) {
+                imageItem.innerHTML = `
+                    <i class="fas fa-image placeholder-icon"></i>
+                    <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+            }
+        }
+
+        function addPlateToCard(button) {
+            const plateForm = button.parentElement;
+            const plateInput = plateForm.querySelector('.plate-input');
+            const plateType = plateInput.value.trim();
+            const plateList = plateForm.nextElementSibling;
+            
+            if (plateType) {
+                const li = document.createElement('li');
+                li.className = 'plate-item';
+                li.innerHTML = `
+                    <span>${plateType}</span>
+                    <button class="plate-delete-btn" onclick="deletePlateFromCard(this)">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                plateList.appendChild(li);
+                plateInput.value = '';
+                updateSummary();
+            }
+        }
+
+        function deletePlateFromCard(button) {
+            const plateItem = button.parentElement;
+            plateItem.remove();
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const summaryContent = document.getElementById('summaryContent');
+            const allPlates = [];
+            
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const cardTitle = card.querySelector('.card-title-input').value;
+                const plates = [];
+                
+                card.querySelectorAll('.plate-item span').forEach(item => {
+                    plates.push(item.textContent);
+                });
+                
+                if (plates.length > 0) {
+                    allPlates.push({ title: cardTitle, plates: plates });
+                }
+            });
+            
+            let summaryHTML = '';
+            let totalCount = 0;
+            
+            allPlates.forEach(item => {
+                summaryHTML += `
+                    <div class="summary-item">
+                        <span>${item.title}</span>
+                        <span>${item.plates.join('、')}</span>
+                    </div>
+                `;
+                totalCount += item.plates.length;
+            });
+            
+            if (totalCount > 0) {
+                summaryHTML += `
+                    <div class="summary-item">
+                        <span>总计</span>
+                        <span>${totalCount} 件盘子</span>
+                    </div>
+                `;
+            } else {
+                summaryHTML = '<div class="summary-item"><span>暂无盘子需求</span></div>';
+            }
+            
+            summaryContent.innerHTML = summaryHTML;
+        }
+
+        window.onload = function() {
+            updateSummary();
+            
+            // 注册 Service Worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    navigator.serviceWorker.register('./service-worker.js')
+                        .then(function(registration) {
+                            console.log('Service Worker 注册成功:', registration.scope);
+                        })
+                        .catch(function(error) {
+                            console.log('Service Worker 注册失败:', error);
+                        });
+                });
+            }
+        };
+    </script>
+</body>
+</html>
