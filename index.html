@@ -400,18 +400,7 @@
             color: var(--accent-color);
         }
 
-        .summary-card {
-            margin-bottom: 1.5rem;
-            padding: 1rem;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
 
-        .summary-card h4 {
-            margin: 0 0 0.5rem 0;
-            color: var(--text-color);
-        }
 
         .summary-plate-list {
             list-style: none;
@@ -1075,46 +1064,44 @@
             
             const cards = document.querySelectorAll('.card');
             cards.forEach(card => {
-                const cardTitle = card.querySelector('.card-title-input').value;
-                const plateItems = card.querySelectorAll('.plate-item');
-                
-                if (plateItems.length > 0) {
-                    const plates = [];
-                    plateItems.forEach((item, index) => {
-                        const plateText = item.querySelector('span').textContent;
-                        plates.push({ text: plateText, id: `${cardTitle}-${index}` });
-                    });
-                    allPlates.push({ title: cardTitle, plates: plates });
+                card.querySelectorAll('.plate-item span').forEach(item => {
+                    allPlates.push(item.textContent);
+                });
+            });
+            
+            // 按盘子名称聚类
+            const plateGroups = {};
+            allPlates.forEach(plate => {
+                if (!plateGroups[plate]) {
+                    plateGroups[plate] = 0;
                 }
+                plateGroups[plate]++;
             });
             
             let summaryHTML = '';
-            let totalCount = 0;
+            const totalCount = allPlates.length;
             
-            if (allPlates.length > 0) {
+            if (totalCount > 0) {
                 summaryHTML = `
                     <div class="summary-header">
-                        <h3>共 ${allPlates.reduce((total, item) => total + item.plates.length, 0)} 件盘子</h3>
+                        <h3>共 ${totalCount} 件盘子</h3>
                         <div class="total-price">总价：¥<span id="totalPrice">0</span></div>
                     </div>
+                    <ul class="summary-plate-list">
                 `;
                 
-                allPlates.forEach(item => {
+                // 生成聚类后的盘子列表
+                Object.entries(plateGroups).forEach(([plate, count]) => {
                     summaryHTML += `
-                        <div class="summary-card">
-                            <h4>${item.title}</h4>
-                            <ul class="summary-plate-list">
-                                ${item.plates.map(plate => `
-                                    <li class="summary-plate-item">
-                                        <input type="checkbox" class="plate-checkbox" onchange="updatePlateStatus(this)">
-                                        <span>${plate.text}</span>
-                                        <input type="number" class="plate-price" placeholder="价格" step="0.01" min="0" onchange="updatePlatePrice(this)">
-                                    </li>
-                                `).join('')}
-                            </ul>
-                        </div>
+                        <li class="summary-plate-item">
+                            <input type="checkbox" class="plate-checkbox" onchange="updatePlateStatus(this)">
+                            <span>${plate} ${count > 1 ? `x${count}` : ''}</span>
+                            <input type="number" class="plate-price" placeholder="单价" step="0.01" min="0" onchange="updatePlatePrice(this)" data-count="${count}">
+                        </li>
                     `;
                 });
+                
+                summaryHTML += `</ul>`;
             } else {
                 summaryHTML = '<div class="summary-item"><span>暂无盘子需求</span></div>';
             }
@@ -1147,7 +1134,9 @@
             
             priceInputs.forEach(input => {
                 if (input.value) {
-                    total += parseFloat(input.value) || 0;
+                    const price = parseFloat(input.value) || 0;
+                    const count = parseInt(input.dataset.count) || 1;
+                    total += price * count;
                 }
             });
             
