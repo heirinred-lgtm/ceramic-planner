@@ -766,7 +766,8 @@
                 </div>
             `;
             
-            cardGrid.appendChild(newCard);
+            // 将新卡片添加到网格的最上层
+            cardGrid.insertBefore(newCard, cardGrid.firstChild);
             input.value = '';
             
             // 保存新卡片到localStorage
@@ -832,8 +833,8 @@
                             <i class="fas fa-times"></i>
                         </button>
                     `;
-                    // 在添加按钮前插入
-                    addBtn.before(newImageItem);
+                    // 在添加按钮前插入（最右侧）
+                addBtn.before(newImageItem);
                     
                     // 保存图片到localStorage
                     saveCardData(card);
@@ -896,16 +897,6 @@
         function saveCardData(card) {
             const cardId = card.dataset.cardId;
             const cardTitle = card.querySelector('.card-title-input').value;
-            const images = [];
-            
-            // 收集图片数据（只保存有实际图片的项）
-            card.querySelectorAll('.image-item').forEach(item => {
-                const img = item.querySelector('img');
-                const placeholder = item.querySelector('.placeholder-icon');
-                if (img && !placeholder) {
-                    images.push(img.src);
-                }
-            });
             
             // 收集盘子数据
             const plates = [];
@@ -913,11 +904,10 @@
                 plates.push(span.textContent);
             });
             
-            // 构建卡片数据
+            // 构建卡片数据（不存储图片，图片从本地相册获取）
             const cardData = {
                 id: cardId,
                 title: cardTitle,
-                images: images,
                 plates: plates
             };
             
@@ -953,21 +943,6 @@
                 card.className = 'card';
                 card.dataset.cardId = cardData.id;
                 
-                // 构建图片部分
-                let imagesHTML = '';
-                if (cardData.images && cardData.images.length > 0) {
-                    cardData.images.forEach(imageSrc => {
-                        imagesHTML += `
-                            <div class="image-item" onclick="enlargeImage('${imageSrc}')">
-                                <img src="${imageSrc}">
-                                <button class="delete-image-btn" onclick="deleteImage(this, event)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
-                        `;
-                    });
-                }
-                
                 // 构建盘子部分
                 let platesHTML = '';
                 if (cardData.plates && cardData.plates.length > 0) {
@@ -991,7 +966,6 @@
                         </div>
                     </div>
                     <div class="image-gallery">
-                        ${imagesHTML}
                         <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
                         <div class="add-image-btn" onclick="triggerAddImage(this)">
                             <i class="fas fa-plus"></i>
