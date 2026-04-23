@@ -1,0 +1,23 @@
+{
+  "name": "景德镇画瓷之旅",
+  "short_name": "画瓷之旅",
+  "description": "景德镇画瓷之旅素材整理与盘子采购计划",
+  "start_url": "./jdz-ceramic.html",
+  "display": "standalone",
+  "background_color": "#f8f5f0",
+  "theme_color": "#2c5aa0",
+  "icons": [
+    {
+      "src": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20ceramic%20plate%20painting%20icon%2C%20blue%20and%20white%20porcelain%2C%20minimal%20design&image_size=square",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Chinese%20ceramic%20plate%20painting%20icon%2C%20blue%20and%20white%20porcelain%2C%20minimal%20design&image_size=square",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
