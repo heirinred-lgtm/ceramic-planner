@@ -720,17 +720,31 @@
             
             cardGrid.appendChild(newCard);
             input.value = '';
+            
+            // 保存新卡片到localStorage
+            saveCardData(newCard);
+            
             cardIdCounter++;
             updateSummary();
         }
 
         function deleteCard(button) {
             const card = button.closest('.card');
+            const cardId = card.dataset.cardId;
             card.remove();
+            
+            // 从localStorage中删除卡片数据
+            let allCardsData = JSON.parse(localStorage.getItem('jdzCeramicCards')) || [];
+            allCardsData = allCardsData.filter(item => item.id !== cardId);
+            localStorage.setItem('jdzCeramicCards', JSON.stringify(allCardsData));
+            
             updateSummary();
         }
 
         function updateCardTitle(input) {
+            const card = input.closest('.card');
+            // 保存卡片数据到localStorage
+            saveCardData(card);
             updateSummary();
         }
 
@@ -751,11 +765,15 @@
                 const reader = new FileReader();
                 const imageItem = input.previousElementSibling;
                 const addBtn = input.nextElementSibling;
+                const card = input.closest('.card');
+                const cardId = card.dataset.cardId;
                 
                 reader.onload = function(e) {
+                    const base64Image = e.target.result;
+                    
                     // 移除占位图标
                     imageItem.innerHTML = `
-                        <img src="${e.target.result}">
+                        <img src="${base64Image}">
                         <button class="delete-image-btn" onclick="deleteImage(this, event)">
                             <i class="fas fa-times"></i>
                         </button>
@@ -770,6 +788,9 @@
                         </button>
                     `;
                     addBtn.before(newImageItem);
+                    
+                    // 保存图片到localStorage
+                    saveCardData(card);
                 }
                 
                 reader.readAsDataURL(input.files[0]);
@@ -791,7 +812,145 @@
                         <i class="fas fa-times"></i>
                     </button>
                 `;
+                
+                // 保存卡片数据到localStorage
+                saveCardData(card);
             }
+        }
+
+        // 保存卡片数据到localStorage
+        function saveCardData(card) {
+            const cardId = card.dataset.cardId;
+            const cardTitle = card.querySelector('.card-title-input').value;
+            const images = [];
+            
+            // 收集图片数据
+            card.querySelectorAll('.image-item img').forEach(img => {
+                images.push(img.src);
+            });
+            
+            // 收集盘子数据
+            const plates = [];
+            card.querySelectorAll('.plate-item span').forEach(span => {
+                plates.push(span.textContent);
+            });
+            
+            // 构建卡片数据
+            const cardData = {
+                id: cardId,
+                title: cardTitle,
+                images: images,
+                plates: plates
+            };
+            
+            // 获取所有卡片数据
+            let allCardsData = JSON.parse(localStorage.getItem('jdzCeramicCards')) || [];
+            
+            // 检查是否已存在该卡片
+            const existingIndex = allCardsData.findIndex(item => item.id === cardId);
+            
+            if (existingIndex !== -1) {
+                // 更新现有卡片
+                allCardsData[existingIndex] = cardData;
+            } else {
+                // 添加新卡片
+                allCardsData.push(cardData);
+            }
+            
+            // 保存到localStorage
+            localStorage.setItem('jdzCeramicCards', JSON.stringify(allCardsData));
+        }
+
+        // 从localStorage加载卡片数据
+        function loadCardData() {
+            const allCardsData = JSON.parse(localStorage.getItem('jdzCeramicCards')) || [];
+            const cardGrid = document.getElementById('cardGrid');
+            
+            // 清空现有卡片
+            cardGrid.innerHTML = '';
+            
+            // 重新创建卡片
+            allCardsData.forEach(cardData => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.dataset.cardId = cardData.id;
+                
+                // 构建图片部分
+                let imagesHTML = '';
+                if (cardData.images && cardData.images.length > 0) {
+                    cardData.images.forEach(imageSrc => {
+                        imagesHTML += `
+                            <div class="image-item" onclick="triggerFileInput(this)">
+                                <img src="${imageSrc}">
+                                <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        `;
+                    });
+                } else {
+                    // 添加一个空的图片项
+                    imagesHTML = `
+                        <div class="image-item" onclick="triggerFileInput(this)">
+                            <i class="fas fa-image placeholder-icon"></i>
+                            <button class="delete-image-btn" onclick="deleteImage(this, event)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    `;
+                }
+                
+                // 构建盘子部分
+                let platesHTML = '';
+                if (cardData.plates && cardData.plates.length > 0) {
+                    cardData.plates.forEach(plate => {
+                        platesHTML += `
+                            <li class="plate-item">
+                                <span>${plate}</span>
+                                <button class="plate-delete-btn" onclick="deletePlateFromCard(this)">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </li>
+                        `;
+                    });
+                }
+                
+                card.innerHTML = `
+                    <div class="card-header">
+                        <input type="text" class="card-title-input" value="${cardData.title}" onchange="updateCardTitle(this)">
+                        <div class="card-actions">
+                            <button class="delete-card-btn" onclick="deleteCard(this)">删除卡片</button>
+                        </div>
+                    </div>
+                    <div class="image-gallery">
+                        ${imagesHTML}
+                        <input type="file" class="upload-input" accept="image/*" onchange="uploadImage(this)">
+                        <div class="add-image-btn" onclick="triggerAddImage(this)">
+                            <i class="fas fa-plus"></i>
+                            <span>添加图片</span>
+                        </div>
+                    </div>
+                    <div class="plate-section">
+                        <h4>需要的盘子</h4>
+                        <div class="plate-form">
+                            <input type="text" class="plate-input" placeholder="输入盘子形状，例如 8寸圆盘">
+                            <button class="plate-add-btn" onclick="addPlateToCard(this)">添加</button>
+                        </div>
+                        <ul class="plate-list">${platesHTML}</ul>
+                    </div>
+                `;
+                
+                cardGrid.appendChild(card);
+            });
+            
+            // 更新卡片ID计数器
+            if (allCardsData.length > 0) {
+                const maxId = Math.max(...allCardsData.map(card => parseInt(card.id)));
+                cardIdCounter = maxId + 1;
+            }
+            
+            // 更新总结
+            updateSummary();
         }
 
         function addPlateToCard(button) {
@@ -799,6 +958,7 @@
             const plateInput = plateForm.querySelector('.plate-input');
             const plateType = plateInput.value.trim();
             const plateList = plateForm.nextElementSibling;
+            const card = button.closest('.card');
             
             if (plateType) {
                 const li = document.createElement('li');
@@ -811,13 +971,20 @@
                 `;
                 plateList.appendChild(li);
                 plateInput.value = '';
+                
+                // 保存卡片数据到localStorage
+                saveCardData(card);
                 updateSummary();
             }
         }
 
         function deletePlateFromCard(button) {
             const plateItem = button.parentElement;
+            const card = plateItem.closest('.card');
             plateItem.remove();
+            
+            // 保存卡片数据到localStorage
+            saveCardData(card);
             updateSummary();
         }
 
@@ -867,7 +1034,8 @@
         }
 
         window.onload = function() {
-            updateSummary();
+            // 从localStorage加载卡片数据
+            loadCardData();
             
             // 注册 Service Worker
             if ('serviceWorker' in navigator) {
